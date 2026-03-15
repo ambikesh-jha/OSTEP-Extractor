@@ -14,6 +14,7 @@ ostep_api/
 ├── .env                           # Environment configuration
 ├── requirements.txt
 ├── README.md
+├── index.html
 │
 ├── core/
 │   ├── config.py                  # Pydantic Settings (reads .env)
@@ -39,6 +40,10 @@ ostep_api/
 │   ├── merger.py                  # PDF merge pipeline
 │   ├── chapter_parser.py          # Index page → chapter list
 │   └── job_store.py               # Single-pipeline state + WS pub/sub
+│
+├── static/
+│   ├── app.js                     # javascript 
+│   └── style.css                  # style
 │
 └── utils/
     ├── http.py                    # RateLimitedSession + RobotsChecker
