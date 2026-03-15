@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OSTEP Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       SIDEBAR
+  ═══════════════════════════════════════════ -->
+  <aside id="sidebar">
+
+    <div class="sb-brand">
+      <div class="sb-logo">
+        <span class="sb-logo-os">OS</span>
+        <span class="sb-logo-tep">TEP</span>
+      </div>
+      <p class="sb-tagline">Offline Builder</p>
+    </div>
+
+    <!-- Pipeline pill -->
+    <div class="sb-pipeline" id="sbPipeline">
+      <span class="pipeline-orb" id="pipelineOrb"></span>
+      <span class="pipeline-label" id="pipelineLabel">Idle</span>
+      <span class="pipeline-phase" id="pipelinePhase">—</span>
+    </div>
+
+    <!-- Asset tree -->
+    <div class="sb-section-label">ostep_assets</div>
+
+    <div class="sb-total-row">
+      <span class="sb-total-count" id="sbTotalCount">0 files</span>
+      <button class="sb-refresh-btn" id="sbRefreshBtn" title="Refresh assets">↺</button>
+    </div>
+
+    <nav class="asset-tree" id="assetTree">
+
+      <div class="cat-block">
+        <button class="cat-toggle" data-cat="pdfs">
+          <span class="cat-icon">📄</span>
+          <span class="cat-name">pdfs</span>
+          <span class="cat-badge" id="badge-pdfs">0</span>
+          <span class="cat-chevron">›</span>
+        </button>
+        <ul class="cat-list" id="list-pdfs"></ul>
+      </div>
+
+      <div class="cat-block">
+        <button class="cat-toggle" data-cat="images">
+          <span class="cat-icon">🖼</span>
+          <span class="cat-name">images</span>
+          <span class="cat-badge" id="badge-images">0</span>
+          <span class="cat-chevron">›</span>
+        </button>
+        <ul class="cat-list" id="list-images"></ul>
+      </div>
+
+      <div class="cat-block">
+        <button class="cat-toggle" data-cat="code">
+          <span class="cat-icon">{ }</span>
+          <span class="cat-name">code</span>
+          <span class="cat-badge" id="badge-code">0</span>
+          <span class="cat-chevron">›</span>
+        </button>
+        <ul class="cat-list" id="list-code"></ul>
+      </div>
+
+      <div class="cat-block">
+        <button class="cat-toggle" data-cat="homework">
+          <span class="cat-icon">📦</span>
+          <span class="cat-name">homework</span>
+          <span class="cat-badge" id="badge-homework">0</span>
+          <span class="cat-chevron">›</span>
+        </button>
+        <ul class="cat-list" id="list-homework"></ul>
+      </div>
+
+    </nav>
+
+    <!-- Merged file card -->
+    <div class="sb-divider"></div>
+    <div class="sb-section-label">Merged Book</div>
+
+    <div class="merged-card" id="mergedCard">
+      <div class="merged-card-icon">📕</div>
+      <div class="merged-card-info">
+        <div class="merged-card-name" id="mergedName">Not generated</div>
+        <div class="merged-card-meta" id="mergedMeta">Run pipeline to generate</div>
+      </div>
+      <button class="merged-view-btn" id="mergedViewBtn" disabled title="View PDF">⊙</button>
+      <button class="merged-dl-btn"   id="mergedDlBtn"   disabled title="Download">↓</button>
+    </div>
+
+  </aside>
+
+  <!-- ═══════════════════════════════════════════
+       MAIN
+  ═══════════════════════════════════════════ -->
+  <main id="main">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="health-indicator" id="healthIndicator">
+          <span class="health-dot" id="healthDot"></span>
+          <span class="health-txt" id="healthTxt">Connecting…</span>
+        </div>
+        <div class="topbar-divider"></div>
+        <span class="topbar-job-id" id="topbarJobId"></span>
+      </div>
+      <div class="topbar-right">
+        <span class="ws-badge" id="wsBadge">
+          <span class="ws-led" id="wsLed"></span>
+          <span id="wsLbl">WS offline</span>
+        </span>
+      </div>
+    </header>
+
+    <!-- Scroll content -->
+    <div class="content" id="content">
+
+      <!-- ── Scraper card ── -->
+      <section class="card" id="scraperCard">
+        <div class="card-header">
+          <h2 class="card-title">Scraper</h2>
+          <div class="card-header-right" id="cardHeaderRight"></div>
+        </div>
+        <div class="card-body">
+          <div class="url-row">
+            <div class="url-field-wrap">
+              <label class="field-label" for="urlInput">Source URL</label>
+              <div class="url-field">
+                <span class="url-field-icon">⌁</span>
+                <input
+                  id="urlInput"
+                  class="url-input"
+                  type="url"
+                  value="https://pages.cs.wisc.edu/~remzi/OSTEP/"
+                  spellcheck="false"
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+            <button class="btn-primary" id="btnScrape">
+              <span id="btnScrapeIcon">▶</span>
+              <span id="btnScrapeTxt">Start Scraping</span>
+            </button>
+          </div>
+
+          <!-- Stage track -->
+          <div class="stage-track">
+            <div class="stage-step" id="stgIdle">
+              <div class="stage-circle"></div>
+              <span>Idle</span>
+            </div>
+            <div class="stage-line" id="lineScrape"></div>
+            <div class="stage-step" id="stgScrape">
+              <div class="stage-circle"></div>
+              <span>Scrape</span>
+            </div>
+            <div class="stage-line" id="lineMerge"></div>
+            <div class="stage-step" id="stgMerge">
+              <div class="stage-circle"></div>
+              <span>Merge</span>
+            </div>
+            <div class="stage-elapsed" id="stageElapsed" style="display:none">
+              <span id="elapsedTxt">0s</span>
+            </div>
+          </div>
+
+          <!-- Inline download strip — shown after merge completes -->
+          <div class="download-strip" id="downloadStrip" style="display:none">
+            <div class="download-strip-info">
+              <span class="download-strip-icon">✓</span>
+              <span class="download-strip-msg">Pipeline complete — your PDF is ready</span>
+              <span class="download-strip-meta" id="downloadStripMeta"></span>
+            </div>
+            <button class="btn-dl-strip" id="btnDlStrip">↓ Download PDF</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Metrics row ── -->
+      <div class="metrics-row">
+        <div class="metric-card" id="mcFound">
+          <div class="metric-val" id="mvFound">—</div>
+          <div class="metric-key">Chapters Found</div>
+        </div>
+        <div class="metric-card" id="mcFetched">
+          <div class="metric-val" id="mvFetched">—</div>
+          <div class="metric-key">Chapters Fetched</div>
+        </div>
+        <div class="metric-card" id="mcAssets">
+          <div class="metric-val" id="mvAssets">—</div>
+          <div class="metric-key">Assets Downloaded</div>
+        </div>
+        <div class="metric-card" id="mcPages">
+          <div class="metric-val" id="mvPages">—</div>
+          <div class="metric-key">Total Pages</div>
+        </div>
+      </div>
+
+      <!-- ── Progress bar ── -->
+      <section class="card progress-card">
+        <div class="card-header">
+          <h2 class="card-title" id="progTitle">Progress</h2>
+          <span class="prog-pct" id="progPct">0%</span>
+        </div>
+        <div class="prog-track-outer">
+          <div class="prog-track-inner" id="progFill"></div>
+        </div>
+        <p class="prog-desc" id="progDesc">Waiting to start…</p>
+      </section>
+
+      <!-- ── Live log ── -->
+      <section class="card log-card">
+        <div class="card-header">
+          <h2 class="card-title">Live Log</h2>
+          <div class="log-header-right">
+            <button class="btn-ghost" id="btnClearLog">Clear</button>
+          </div>
+        </div>
+        <div class="log-body" id="logBody">
+          <div class="log-empty" id="logEmpty">
+            <span class="log-empty-icon">_</span>
+            Enter a URL and start the pipeline.
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /content -->
+  </main>
+
+  <!-- ═══════════════════════════════════════════
+       FILE VIEWER MODAL
+  ═══════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="viewerBackdrop">
+    <div class="modal-lg" id="viewerModal" role="dialog" aria-modal="true">
+      <div class="modal-lg-header">
+        <div class="modal-lg-file-info">
+          <span class="modal-lg-icon" id="viewerIcon">📄</span>
+          <div>
+            <div class="modal-lg-filename" id="viewerFilename">file.pdf</div>
+            <div class="modal-lg-pills" id="viewerPills"></div>
+          </div>
+        </div>
+        <div class="modal-lg-actions">
+          <button class="btn-primary btn-sm" id="btnViewerDl">↓ Download</button>
+          <button class="btn-ghost btn-icon" id="btnViewerClose" aria-label="Close">✕</button>
+        </div>
+      </div>
+      <div class="modal-lg-body" id="viewerBody"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       ERROR MODAL
+  ═══════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="errBackdrop">
+    <div class="modal-sm" id="errModal" role="dialog" aria-modal="true">
+      <div class="modal-sm-icon err-icon">!</div>
+      <h3 class="modal-sm-title" id="errTitle">Error</h3>
+      <p class="modal-sm-body" id="errMsg">An error occurred.</p>
+      <details class="err-details" id="errDetails" style="display:none">
+        <summary>Details</summary>
+        <pre id="errDetailPre"></pre>
+      </details>
+      <div class="modal-sm-actions">
+        <button class="btn-primary" id="btnErrClose">Dismiss</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
